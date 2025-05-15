@@ -67,5 +67,5 @@ else:
 	print(f"Invalid path: {args.file}")
 	exit()
 
-subprocess.run(f"ollama run tuned-deepseek-r1:7b '''{prompt}''' >> analyses/{args.file}", shell=True)
+subprocess.run(f"ollama run tuned-deepseek-r1:7b '''{prompt}'''" >> analyses/{args.file}, shell=True)
 print(f"Completed in {time.time() - start:.2f} seconds")
