@@ -1,0 +1,5 @@
+*.txt
+transcripts/*
+.git/*
+.git
+metadata.csv
