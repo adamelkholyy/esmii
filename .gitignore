@@ -3,3 +3,4 @@ transcripts/*
 .git/*
 .git
 metadata.csv
+nohup.out
