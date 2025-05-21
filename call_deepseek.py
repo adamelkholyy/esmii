@@ -74,7 +74,7 @@ Identify the following from the transcript and provide a written explanation of 
 5. Key quotes from the transcript relevant to the above criteria"""
 
 
-print(f"Analysing {args.file}...")
+print(f"Analysing {args.file} using {args.model}")
 start = time.time()
 
 if "Mother" in args.file:
@@ -87,10 +87,10 @@ else:
 	print(f"Invalid path: {args.file}")
 	exit()
 
-prompt = "Hi!"
 with open("prompt.txt", "w", encoding="utf-8") as temp:
 	temp.write(prompt)
 
-subprocess.run(f"ollama run {args.model} < prompt.txt >> {os.path.join('analyses', args.file)}", shell=True)
+outpath = os.path.join("analyses", args.file)
+subprocess.run(f"ollama run {args.model} < prompt.txt >> {outpath}", shell=True)
 
 print(f"Completed in {time.time() - start:.2f} seconds")

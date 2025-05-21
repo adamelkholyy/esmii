@@ -17,16 +17,12 @@
 #SBATCH --job-name=esmii
 
 
-## load modules
-echo Loading modules....
-
- module use /lustre/shared/easybuild/modules/all
 
 cd /lustre/projects/Research_Project-T116269/esmii
-echo Modules loaded. Running ollama...
+echo Starting ollama server...
 
 ## run ollama server in the background in release mode
-GIN_MODE=release ollama serve > ollama_server.log 2>&1 &
+ollama serve > ollama_server.log 2>&1 &
 
 sleep 5
 
@@ -35,15 +31,13 @@ netstat -tulpn | grep 11434
 ## execute python script
 start_time=$(date +%s)
 echo Ollama started succesfully. Executing Python script...
-
-## python call_deepseek.py -f "Mother/KC-HM12.txt"
-python test.py
+python run_analysis.py
 
 echo Python script executed successfully.
 end_time=$(date +%s)
 elapsed_time=$((end_time - start_time))
 echo "Elapsed time: $elapsed_time seconds"
-echo End of script - job finished successfully.
+echo Job finished successfully.
 
 
 
