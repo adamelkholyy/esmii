@@ -20,20 +20,24 @@
 ## load modules
 echo Loading modules....
 
-module use /lustre/shared/easybuild/modules/all
+ module use /lustre/shared/easybuild/modules/all
 
 cd /lustre/projects/Research_Project-T116269/esmii
 echo Modules loaded. Running ollama...
 
-nohup ollama serve &
+## run ollama server in the background in release mode
+GIN_MODE=release ollama serve > ollama_server.log 2>&1 &
 
-echo Ollama server started succesfully.
+sleep 5
+
+netstat -tulpn | grep 11434 
 
 ## execute python script
 start_time=$(date +%s)
-echo Executing Python script...
+echo Ollama started succesfully. Executing Python script...
 
-python call_deepseek.py -f "Mother/KC-HM12.txt"
+## python call_deepseek.py -f "Mother/KC-HM12.txt"
+python test.py
 
 echo Python script executed successfully.
 end_time=$(date +%s)

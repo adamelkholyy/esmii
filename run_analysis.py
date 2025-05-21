@@ -1,6 +1,6 @@
 import subprocess
 
-# HERTS
+# HERTS Mothers
 files = ["KC-HM11",
         "KC-HM12",
         "KC-HM13",
@@ -16,10 +16,10 @@ files = ["KC-HM11",
         "KC-HM5",
         "KC-HM6",]
 
-# HERTS
+# HERTS SSS and Staff
 files = ["SSS/KC-HP3", "SSS/KC-HP4", "Staff/KC-HS1", "Staff/KC-HS2"]
 
 
 for file in files:
-        subprocess.run(f'python run_ollama.py -f {file}.txt', shell=True)
+        subprocess.run(f'python call_deepseek.py -f {file}.txt -m gpu-deepseek', shell=True)
 

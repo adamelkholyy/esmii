@@ -1,6 +1,9 @@
 *.txt
 transcripts/*
 .git/*
-.git
 metadata.csv
 nohup.out
+esmii.err
+esmii.out
+ollama_server.log
+llama/*
