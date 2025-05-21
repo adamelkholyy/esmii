@@ -1,25 +1,19 @@
 import subprocess
-
-# HERTS Mothers
-files = ["KC-HM11",
-        "KC-HM12",
-        "KC-HM13",
-        "KC-HM8",
-        "KC-HM9",
-        "KC-HM4",
-        "KC-HM10",
-        "KC-HM14",
-        "KC-HM3",
-        "KC-HM1",
-        "KC-HM2",
-        "KC-HM7",
-        "KC-HM5",
-        "KC-HM6",]
-
-# HERTS SSS and Staff
-files = ["SSS/KC-HP3", "SSS/KC-HP4", "Staff/KC-HS1", "Staff/KC-HS2"]
+import os
 
 
+transcripts = {"Mother": [], "Staff": [], "SSS": []}
+
+for root, dirs, files in os.walk("transcripts"):
+	category = os.path.basename(root)
+	for file in files:
+		filepath = os.path.join(category, file)
+		transcripts[category].append(filepath)
+
+model = "gpu-deepseek"
+model = "largectx-deepseek"
+
+files = transcripts["Mother"][:5]
 for file in files:
-        subprocess.run(f'python call_deepseek.py -f {file}.txt -m gpu-deepseek', shell=True)
-
+	subprocess.run(f'python call_deepseek.py -f {file} -m {model}', shell=True)
+	
