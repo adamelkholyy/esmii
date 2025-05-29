@@ -18,7 +18,13 @@
 
 
 
+
 cd /lustre/projects/Research_Project-T116269/esmii
+
+echo Loading Python module...
+module load Python/3.11.3-GCCcore-12.3.0
+
+
 echo Starting ollama server...
 
 ## run ollama server in the background in release mode

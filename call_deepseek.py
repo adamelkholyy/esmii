@@ -6,24 +6,12 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help="Name of target transcript file")
 parser.add_argument("-m", "--model", help="Name of LLM to prompt")
+parser.add_argument("-p", "--prompt", help="Name of prompt file")
 args = parser.parse_args()
 
 path = os.path.join("transcripts", args.file)
 with open(path, "r", encoding="utf-8") as f:
 	content = f.read()
-
-old_mother_prompt = f"""
-Conduct a qualitative analysis on the following interview transcript:
-
-{content}
-
-Identify the following from the transcript and provide a written explanation of your findings:
-
-1. The themes from the interview session
-2. The treatment/intervention/support received by the interviewee
-3. The quality of service received by the interviewee
-4. The relationship of the interviewee to their significant sources of support
-5. Key quotes from the transcript relevant to the above criteria"""
 
 
 mother_prompt = f"""
@@ -44,19 +32,20 @@ Answer the following questions given the information in the transcript:
 """
 
 
-
 staff_prompt = f"""
-Conduct a qualitative analysis on the following interview transcript:
+Below is a transcript of an interview between a perinatal mental health staff member and a psychology researcher.
+The aim of the interview was to understand the experiences of perinatal mental health staff members when working with patients.
+You will be asked to answer some questions about the mother's experience, based on the transcript below:
 
 {content}
 
-Identify the following from the transcript and provide a written explanation of your>
+Answer the following questions given the information in the transcript:
 
-1. The themes from the interview session
-2. The treatment/intervention/support offered by the interviewee
-3. The quality of service offered by the interviewee
-4. The relationship of the interviewee to their patients
-5. The job satisfaction of the interviewee
+1. What was the staff member's attitude toward their patients? Were their patients compliant/adherent to treatment?
+2. What treatment does the staff memeber offer to mothers suffering from perinatal mental health issues?
+3. What is the staff member's attitude toward their own work? Are they satisfied in their current role?
+4. What were the self-reported limitations of the treatment offered by the staff member, if any?
+5. What were the self-reported potential improvements to the service offered by the staff member, if any?
 6. Key quotes from the transcript relevant to the above criteria"""
 
 
