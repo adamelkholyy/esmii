@@ -37,6 +37,7 @@ netstat -tulpn | grep 11434
 ## execute python script
 start_time=$(date +%s)
 echo Ollama started succesfully. Executing Python script...
+
 python run_analysis.py
 
 echo Python script executed successfully.

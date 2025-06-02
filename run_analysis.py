@@ -2,36 +2,32 @@ import subprocess
 import os
 import pandas as pd
 
-
-
-df = pd.read_csv("metadata.csv", encoding="cp1252")
-df = df[df["Staff group"] == "Psychiatrist"]
-participants = df["Participant number"].tolist()
-not_filtering = False
-
 transcripts = {"Mother": [], "Staff": [], "SSS": []}
+model = "deepseek-32b"
+filtering = True
 
+# run meta analysis on existing summaries
+meta_analysis = True
+if meta_analysis:
+	subprocess.run(f'python run_meta_analysis.py -f analyses/all_psychiatrists.txt -m {model}', shell=True)
+	subprocess.run(f'python run_meta_analysis.py -f analyses/all_ptsd.txt -m {model}', shell=True)
+	exit()
+
+# filter dataframe for specific participants
+df = pd.read_csv("metadata.csv", encoding="cp1252")
+df = df[df["Diagnosis"].str.contains("PTSD", na=False)]
+participants = df["Participant number"].tolist()
+
+# get filtered transcript paths
 for root, dirs, files in os.walk("transcripts"):
 	category = os.path.basename(root)
 	for file in files:
-		if file[:-4] in participants or not_filtering:
+		if not filtering or file[:-4] in participants:
 			filepath = os.path.join(category, file)
 			transcripts[category].append(filepath)
 
-
-# model = "deepseek-7b"
-# model = "deepseek-r1:70b"
-# model = "deepseek-r1:671b"
-
-model = "deepseek-14b"
-model = "deepseek-32b"
-
-print(transcripts)
-
-# files = transcripts["Mother"][:1]
-# files = ["Mother/KC-HM12.txt"]
-files = transcripts["Staff"]
-
+# run analysis
+files = transcripts["Mother"] + transcripts["Staff"] + transcripts["SSS"]
 for file in files:
 	subprocess.run(f'python call_deepseek.py -f {file} -m {model}', shell=True)
 	
