@@ -1,15 +1,18 @@
 import subprocess
 import time
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--model", help="Name of LLM to prompt")
 parser.add_argument("-f", "--file", help="Path to prompt file")
 args = parser.parse_args()
 
-outpath = f"{args.file[:-4]}_summary.txt"
+outpath =  f"summaries/{os.path.basename(args.file)}"
+
 start = time.time()
-subprocess.run(f"ollama run {args.model} < {args.file} >> {outpath}", shell=True)
+print(f"Analysing {args.file}...")
+subprocess.run(f"ollama run {args.model} < '{args.file}' >> '{outpath}'", shell=True)
 complete_time = time.time() - start
 
 with open(outpath, "a", encoding="utf-8") as f:

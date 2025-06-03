@@ -7,3 +7,5 @@ esmii.err
 esmii.out
 ollama_server.log
 llama/*
+sections/*
+summaries/*

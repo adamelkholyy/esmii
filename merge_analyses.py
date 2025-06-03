@@ -1,5 +1,6 @@
 import os
 
+# TODO: change to HPC dir
 os.chdir("c:/Users/ae553/Documents/ESMI-II/hpc analyses/")
 
 # read LLM response file and separate final answer

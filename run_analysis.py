@@ -16,14 +16,18 @@ if chadwick_analysis:
 		prompt = f"""
 		Below is a section from an 1842 governmental report investigating the spread of diseases among the labouring class in Britain entitled 
 		Report on the Sanitary Condition of the Labouring Population of Great Britain by Edwin Chadwick. The section is titled '{file[:-4]}' and is provided below:
-		
+
 		{content}
 
 		Provide a detailed summary of this section of the report.
 		"""
 
-		subprocess.run(f'python llm_analysis.py -f sections/{file} -m {model}', shell=True)
+		promptfile = f"{file[:-4]}_summary.txt"
+		with open(promptfile, "w", encoding="utf-8") as f:
+			f.write(prompt)
 
+		subprocess.run(f'python llm_analysis.py -f "{promptfile}"  -m {model}', shell=True)
+		os.remove(promptfile)
 	exit()
 
 # filter dataframe for specific participants
