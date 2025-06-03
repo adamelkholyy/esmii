@@ -3,6 +3,15 @@ import time
 import argparse
 import os
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", "--file", help="Name of target transcript file")
+parser.add_argument("-m", "--model", help="Name of LLM to prompt")
+args = parser.parse_args()
+
+inpath = os.path.join("transcripts", args.file)
+with open(inpath, "r", encoding="utf-8") as f:
+    content = f.read()
+
 # prompts for mother, staff, and SSS interview transcripts
 mother_prompt = f"""
 Below is a transcript of an interview between a mother and a psychology researcher. 
@@ -56,11 +65,6 @@ Identify the following from the transcript and provide a written explanation of 
 5. Key quotes from the transcript relevant to the above criteria"""
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--file", help="Name of target transcript file")
-parser.add_argument("-m", "--model", help="Name of LLM to prompt")
-args = parser.parse_args()
-
 print(f"Analysing {args.file} using {args.model}")
 start = time.time()
 
@@ -73,11 +77,6 @@ elif "SSS" in args.file:
     prompt = sss_prompt
 else:
     raise FileNotFoundError(f"Invalid path: {args.file}")
-
-# read transcript file and write prompt out to temp file
-inpath = os.path.join("transcripts", args.file)
-with open(inpath, "r", encoding="utf-8") as f:
-    content = f.read()
 
 with open("prompt.txt", "w", encoding="utf-8") as temp:
     temp.write(prompt)

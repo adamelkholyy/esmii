@@ -17,8 +17,6 @@
 #SBATCH --job-name=esmii
 
 
-
-
 cd /lustre/projects/Research_Project-T116269/esmii
 
 echo Loading Python module...
