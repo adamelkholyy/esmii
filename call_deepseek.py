@@ -4,6 +4,7 @@ import argparse
 import os
 
 # prompts for mother, staff, and SSS interview transcripts
+
 mother_prompt = f"""
 Below is a transcript of an interview between a mother and a psychology researcher. 
 The aim of the interview was to understand the experiences of mothers who have been through perinatal mental health services. 
@@ -59,6 +60,7 @@ Identify the following from the transcript and provide a written explanation of 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help="Name of target transcript file")
 parser.add_argument("-m", "--model", help="Name of LLM to prompt")
+parser.add_argument("-d", "--dir", help="Name of directory for analyses to be saved in", default="analyses")
 args = parser.parse_args()
 
 print(f"Analysing {args.file} using {args.model}")
@@ -83,7 +85,7 @@ with open("prompt.txt", "w", encoding="utf-8") as temp:
     temp.write(prompt)
 
 # call deepseek for analysis
-outpath = os.path.join("analyses", f"{args.file[:-4]}-{args.model}.txt")
+outpath = os.path.join(args.dir, f"{args.file[:-4]}-{args.model}.txt")
 subprocess.run(f"ollama run {args.model} < prompt.txt >> {outpath}", shell=True)
 complete_time = time.time() - start
 
