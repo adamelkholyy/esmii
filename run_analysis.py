@@ -2,15 +2,28 @@ import subprocess
 import os
 import pandas as pd
 
-transcripts = {"Mother": [], "Staff": [], "SSS": []}
 model = "deepseek-32b"
-filtering = True
 
-# run meta analysis on existing summaries
-meta_analysis = True
-if meta_analysis:
-	subprocess.run(f'python run_meta_analysis.py -f analyses/all_psychiatrists.txt -m {model}', shell=True)
-	subprocess.run(f'python run_meta_analysis.py -f analyses/all_ptsd.txt -m {model}', shell=True)
+# run chadwick analysis (not default esmii prompts)
+chadwick_analysis = True
+if chadwick_analysis:
+	files = [f for f in os.listdir("sections") if f.endswith(".txt")]
+	for file in files:
+
+		with open(f"sections/{file}", "r", encoding="utf-8") as f:
+			content = f.read()
+
+		prompt = f"""
+		Below is a section from an 1842 governmental report investigating the spread of diseases among the labouring class in Britain entitled 
+		Report on the Sanitary Condition of the Labouring Population of Great Britain by Edwin Chadwick. The section is titled '{file[:-4]}' and is provided below:
+		
+		{content}
+
+		Provide a detailed summary of this section of the report.
+		"""
+
+		subprocess.run(f'python llm_analysis.py -f sections/{file} -m {model}', shell=True)
+
 	exit()
 
 # filter dataframe for specific participants
@@ -19,6 +32,8 @@ df = df[df["Diagnosis"].str.contains("PTSD", na=False)]
 participants = df["Participant number"].tolist()
 
 # get filtered transcript paths
+filtering = True
+transcripts = {"Mother": [], "Staff": [], "SSS": []}
 for root, dirs, files in os.walk("transcripts"):
 	category = os.path.basename(root)
 	for file in files:
@@ -29,5 +44,5 @@ for root, dirs, files in os.walk("transcripts"):
 # run analysis
 files = transcripts["Mother"] + transcripts["Staff"] + transcripts["SSS"]
 for file in files:
-	subprocess.run(f'python call_deepseek.py -f {file} -m {model}', shell=True)
+	subprocess.run(f'python esmii_analysis.py -f {file} -m {model}', shell=True)
 	

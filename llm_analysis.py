@@ -7,7 +7,7 @@ parser.add_argument("-m", "--model", help="Name of LLM to prompt")
 parser.add_argument("-f", "--file", help="Path to prompt file")
 args = parser.parse_args()
 
-outpath = f"{args.file[:-4]}_meta_analysis.txt"
+outpath = f"{args.file[:-4]}_summary.txt"
 start = time.time()
 subprocess.run(f"ollama run {args.model} < {args.file} >> {outpath}", shell=True)
 complete_time = time.time() - start
