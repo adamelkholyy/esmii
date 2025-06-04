@@ -5,8 +5,30 @@ import pandas as pd
 model = "deepseek-32b"
 
 # run chadwick analysis (not default esmii prompts)
-chadwick_analysis = True
-if chadwick_analysis:
+chadwick_questions = True
+if chadwick_questions:
+        files = [f for f in os.listdir("questions") if f.endswith(".txt")]
+
+	with open("chadwick.txt", "r", encoding="utf-8") as f:
+		chadwick_document = f.read()
+
+	for file in files:
+		with open(f"questions/{file}", "r", encoding="utf-8") as f:
+			content = f.read()
+		prompt = content.replace("[CONTENTHERE]", chadwick_document)
+
+		promptfile = f"{file[:-4]} answer.txt"
+		with open(promptfile, "w", encoding="utf-8") as f:
+			f.write(prompt)
+
+                subprocess.run(f'python llm_analysis.py -f "{promptfile}"  -m {model>
+                os.remove(promptfile)
+	exit()
+
+
+
+chadwick_summary = False
+if chadwick_summary:
 	files = [f for f in os.listdir("sections") if f.endswith(".txt")]
 	for file in files:
 
@@ -22,7 +44,7 @@ if chadwick_analysis:
 		Provide a detailed summary of this section of the report.
 		"""
 
-		promptfile = f"{file[:-4]}_summary.txt"
+		promptfile = f"{file[:-4]} summary.txt"
 		with open(promptfile, "w", encoding="utf-8") as f:
 			f.write(prompt)
 

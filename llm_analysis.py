@@ -8,7 +8,7 @@ parser.add_argument("-m", "--model", help="Name of LLM to prompt")
 parser.add_argument("-f", "--file", help="Path to prompt file")
 args = parser.parse_args()
 
-outpath =  f"summaries/{os.path.basename(args.file)}"
+outpath =  f"answers/{os.path.basename(args.file)}"
 
 start = time.time()
 print(f"Analysing {args.file}...")
