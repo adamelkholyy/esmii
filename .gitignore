@@ -9,3 +9,5 @@ ollama_server.log
 llama/*
 sections/*
 summaries/*
+questions/*
+answers/*

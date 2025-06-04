@@ -4,10 +4,10 @@ import pandas as pd
 
 model = "deepseek-32b"
 
-# run chadwick analysis (not default esmii prompts)
+# run chadwick questions (not default esmii prompts)
 chadwick_questions = True
 if chadwick_questions:
-        files = [f for f in os.listdir("questions") if f.endswith(".txt")]
+	files = [f for f in os.listdir("questions") if f.endswith(".txt")]
 
 	with open("chadwick.txt", "r", encoding="utf-8") as f:
 		chadwick_document = f.read()
@@ -21,12 +21,12 @@ if chadwick_questions:
 		with open(promptfile, "w", encoding="utf-8") as f:
 			f.write(prompt)
 
-                subprocess.run(f'python llm_analysis.py -f "{promptfile}"  -m {model>
-                os.remove(promptfile)
+		subprocess.run(f'python llm_analysis.py -f "{promptfile}"  -m {model}', shell=True)
+		os.remove(promptfile)
 	exit()
 
 
-
+# run chadwick summaries (not default esmii prompts)
 chadwick_summary = False
 if chadwick_summary:
 	files = [f for f in os.listdir("sections") if f.endswith(".txt")]
@@ -52,6 +52,8 @@ if chadwick_summary:
 		os.remove(promptfile)
 	exit()
 
+
+# esmii analysis
 # filter dataframe for specific participants
 df = pd.read_csv("metadata.csv", encoding="cp1252")
 df = df[df["Diagnosis"].str.contains("PTSD", na=False)]
@@ -71,4 +73,4 @@ for root, dirs, files in os.walk("transcripts"):
 files = transcripts["Mother"] + transcripts["Staff"] + transcripts["SSS"]
 for file in files:
 	subprocess.run(f'python esmii_analysis.py -f {file} -m {model}', shell=True)
-	
+
