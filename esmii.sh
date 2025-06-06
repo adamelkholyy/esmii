@@ -11,6 +11,7 @@
 #SBATCH --ntasks-per-node=16        				# specify number of processors per node
 #SBATCH --gres=gpu:1						# num gpus	
 #SBATCH --mem=4G						# requested memory	
+#SBATCH --priority=5000
 
 #SBATCH --output=esmii.out	   				# submit script's standard-out
 #SBATCH --error=esmii.err    					# submit script's standard-error
@@ -36,7 +37,7 @@ netstat -tulpn | grep 11434
 start_time=$(date +%s)
 echo Ollama started succesfully. Executing Python script...
 
-python run_analysis.py
+python run_esmii_analysis.py
 
 echo Python script executed successfully.
 end_time=$(date +%s)
