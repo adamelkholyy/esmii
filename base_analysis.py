@@ -1,25 +1,24 @@
-import subprocess
-import time
 import argparse
 import os
+from utilities import call_llm
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--file", help="Name of target transcript file")
-parser.add_argument("-m", "--model", help="Name of LLM to prompt")
+parser.add_argument("-f", "--file", help="Transcript filename")
+parser.add_argument("-m", "--model", help="Name of LLM to use for analysis ('ollama show' to see available models)", default="deepseek-32b")
+parser.add_argument("-d", "--dir", help="Results output directory", default="analyses")
 args = parser.parse_args()
 
-inpath = os.path.join("transcripts", args.file)
-with open(inpath, "r", encoding="utf-8") as f:
-    content = f.read()
+trancript_path = os.path.join("transcripts", args.file)
+with open(trancript_path, "r", encoding="utf-8") as f:
+    transcript = f.read()
 
 # prompts for mother, staff, and SSS interview transcripts
-
 mother_prompt = f"""
 Below is a transcript of an interview between a mother and a psychology researcher. 
 The aim of the interview was to understand the experiences of mothers who have been through perinatal mental health services. 
 You will be asked to answer some questions about the mother's experience, based on the interview transcript below:
 
-{content}
+{transcript}
 
 Answer the following questions given the information in the transcript:
 
@@ -40,7 +39,7 @@ Below is a transcript of an interview between a perinatal mental health staff me
 The aim of the interview was to understand the experiences of perinatal mental health staff members when working with patients.
 You will be asked to answer some questions about the mother's experience, based on the transcript below:
 
-{content}
+{transcript}
 
 Answer the following questions given the information in the transcript:
 
@@ -55,7 +54,7 @@ Answer the following questions given the information in the transcript:
 sss_prompt = f"""
 Conduct a qualitative analysis on the following interview transcript:
 
-{content}
+{transcript}
 
 Identify the following from the transcript and provide a written explanation of your>
 
@@ -65,9 +64,6 @@ Identify the following from the transcript and provide a written explanation of 
 4. The relationship of the interviewee to their partner/friend/relative etc.
 5. Key quotes from the transcript relevant to the above criteria"""
 
-
-print(f"Analysing {args.file} using {args.model}")
-start = time.time()
 
 # switch to correct prompt
 if "Mother" in args.file:
@@ -79,22 +75,10 @@ elif "SSS" in args.file:
 else:
     raise FileNotFoundError(f"Invalid path: {args.file}")
 
-with open("prompt.txt", "w", encoding="utf-8") as temp:
-    temp.write(prompt)
+promptfile = f"{os.path.basename(args.file)[:-4]}-{args.model}.txt"
+with open(promptfile, "w", encoding="utf-8") as temp:
+    temp.write(promptfile)
 
-# call deepseek for analysis
-outpath = os.path.join(args.dir, f"{args.file[:-4]}-{args.model}.txt")
-subprocess.run(f"ollama run {args.model} < prompt.txt >> {outpath}", shell=True)
-complete_time = time.time() - start
-
-# write out deepseek response with model metadata
-with open(outpath, "a", encoding="utf-8") as f:
-    f.write(
-        "\n"
-        + f"Model: {args.model}"
-        + "\n"
-        + f"Time taken: {complete_time:.2f} seconds"
-        + "\n"
-    )
-
-print(f"Completed in {complete_time:.2f} seconds")
+# run analysis
+call_llm(promptfile, outdir=args.dir, model=args.model)
+os.remove(promptfile)

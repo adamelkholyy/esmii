@@ -1,10 +1,7 @@
-import subprocess
 import os
-import pandas as pd
+from utilities import call_llm
 
-model = "deepseek-32b"
-
-# run chadwick questions (not default esmii prompts)
+# run chadwick question analysis
 chadwick_questions = True
 if chadwick_questions:
 	files = [f for f in os.listdir("questions") if f.endswith(".txt")]
@@ -21,12 +18,12 @@ if chadwick_questions:
 		with open(promptfile, "w", encoding="utf-8") as f:
 			f.write(prompt)
 
-		subprocess.run(f'python llm_analysis.py -f "{promptfile}"  -m {model}', shell=True)
+		call_llm(promptfile, outdir="answers")
 		os.remove(promptfile)
 	exit()
 
 
-# run chadwick summaries (not default esmii prompts)
+# run chadwick summary analysis
 chadwick_summary = False
 if chadwick_summary:
 	files = [f for f in os.listdir("sections") if f.endswith(".txt")]
@@ -48,29 +45,6 @@ if chadwick_summary:
 		with open(promptfile, "w", encoding="utf-8") as f:
 			f.write(prompt)
 
-		subprocess.run(f'python llm_analysis.py -f "{promptfile}"  -m {model}', shell=True)
+		call_llm(promptfile, outdir="summaries")
 		os.remove(promptfile)
 	exit()
-
-
-# esmii analysis
-# filter dataframe for specific participants
-df = pd.read_csv("metadata.csv", encoding="cp1252")
-df = df[df["Diagnosis"].str.contains("PTSD", na=False)]
-participants = df["Participant number"].tolist()
-
-# get filtered transcript paths
-filtering = True
-transcripts = {"Mother": [], "Staff": [], "SSS": []}
-for root, dirs, files in os.walk("transcripts"):
-	category = os.path.basename(root)
-	for file in files:
-		if not filtering or file[:-4] in participants:
-			filepath = os.path.join(category, file)
-			transcripts[category].append(filepath)
-
-# run analysis
-files = transcripts["Mother"] + transcripts["Staff"] + transcripts["SSS"]
-for file in files:
-	subprocess.run(f'python esmii_analysis.py -f {file} -m {model}', shell=True)
-
