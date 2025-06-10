@@ -49,3 +49,44 @@ def merge_analyses(foldername):
 
     with open(f"all_{foldername}.txt", "w", encoding="utf-8") as f:
         f.write(all_content)
+
+
+def merge_ptsd_analyses():
+    answer_files = sorted([f for f in os.listdir("ptsd answers") if f.endswith(".txt")])
+    question_files = sorted([f for f in os.listdir("ptsd questions") if f.endswith(".txt")])
+
+    files = list(zip(question_files, answer_files))
+    print(files)
+
+    merged_analysis = "# DeepSeek PTSD Interview Analysis: KC-OM4 \n Model: deepseek-32b \n \n Time taken: 6 minutes 43 seconds"
+    j = 1
+    for question, answer in files:
+        with open(f"ptsd questions/{question}", "r", encoding="utf-8") as f:
+            q = f.read()
+
+        q_content = q.split("Answer the following questions given the information in the transcript, providing key quotes to support your answer:")[1]
+        i = 1
+        q_c = "\n **Questions:**"
+        for q in q_content.split("\n"):
+            if q:
+                q_c += "\n" + f"{i}. {q}"
+                i += 1
+        q_content = q_c
+
+        
+        a_content = read_file(f"ptsd answers/{answer}")
+
+        title = a_content.split("\n")[0][2:][:-11].title()
+        a_content = "\n".join(a_content.split("\n")[1:])
+        print(title)
+
+
+        merged_analysis += "\n\n" + f"## Theme {j}: " + title + q_content + "\n --- \n **Answers:**  \n" + a_content + "---"
+        j += 1
+
+    print(merged_analysis)
+    with open("merged_analysis.md", "w", encoding="utf-8") as f:
+        f.write(merged_analysis)
+
+if __name__ == "__main__":
+    merge_ptsd_analyses()
